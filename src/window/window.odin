@@ -12,16 +12,16 @@ Window :: struct {
 	window_height: i32,
 	window_title:  cstring,
 	logger:        []logging.Logger,
-	scene:         ^Scene,
+	scene:         Scene,
 }
 
-build :: proc(window_width: i32, window_height: i32) -> Window {
+build :: proc(window_width: i32, window_height: i32, scene: ^Scene) -> Window {
 	logger: []logging.Logger
-	return {window_width, window_height, "Asgard", logger, nil}
+	return {window_width, window_height, "Asgard", logger, scene^}
 }
 
 add_scene :: proc(window: ^Window, scene: ^Scene) {
-	window.scene = scene
+	window.scene = scene^
 }
 
 render :: proc(win: ^Window) {
@@ -68,11 +68,10 @@ render :: proc(win: ^Window) {
 		SDL.SetRenderDrawColor(renderer, 32, 31, 41, 255) // Black
 		SDL.RenderClear(renderer)
 
-		render_current_scene(win)
+		render_current_scene(renderer, win)
 		SDL.RenderPresent(renderer)
 
 		// gl.ClearColor()
-		SDL.GL_SwapWindow(sdl_window)
 		SDL.Delay(16)
 	}
 }
