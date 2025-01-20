@@ -1,33 +1,44 @@
 package ui
 
+import "../"
 import "core:fmt"
+import "core:math"
 import strings "core:strings"
-import SDL "vendor:sdl2"
-import ttf "vendor:sdl2/ttf"
+import rl "vendor:raylib"
 
 Button :: struct {
-	text:        string,
+	label:       Label,
 	callback_fn: proc(),
-	using rect:  SDL.Rect,
+	background:  rl.Color,
+	border:      rl.Color,
+	hovering:    bool,
+	using rect:  rl.Rectangle,
 }
 
-draw_button :: proc(renderer: ^SDL.Renderer, button: ^Button) {
-	SDL.SetRenderDrawColor(renderer, 255, 0, 0, 255)
-	SDL.RenderFillRect(renderer, &((button^).rect))
-	SDL.SetRenderDrawColor(renderer, 255, 255, 0, 255)
-	SDL.RenderDrawRect(renderer, &((button^).rect))
-	//     SDL_Surface *text_surface = TTF_RenderText_Solid(font, "Hello, SDL_ttf!", white);
-	font_size: i32 = 0
-	font := ttf.OpenFont("font/pt-mono-regular.ttf", font_size)
-	if font == nil {
-		fmt.printfln("font error")
-		return
-	}
-	defer ttf.CloseFont(font)
-	cstr := strings.unsafe_string_to_cstring(button.text)
-	surface := ttf.RenderText_Blended(font, cstr, SDL.Color{100, 100, 100, 255})
-	defer SDL.FreeSurface(surface)
-	texture := SDL.CreateTextureFromSurface(renderer, surface)
-	// renderer: ^Renderer, texture: ^Texture, srcrect: ^Rect, dstrect: ^Rect
-	SDL.RenderCopy(renderer, texture, nil, &((button^).rect))
+create_labeled_button :: proc(text: string, callback_fn: proc()) -> Button {
+	btn := Button{}
+	btn.rect = rl.Rectangle{100, 100, 125, 25}
+	btn.background = rl.Color{70, 96, 112, 0}
+	btn.border = rl.Color{115, 172, 170, 0}
+	btn.hovering = false
+	btn.callback_fn = callback_fn
+	gap_size: i32 = 75
+	label := build_label("test")
+	return btn
+}
+
+on_hover :: proc(button: ^Button) {
+	button.hovering = !button.hovering
+}
+
+draw_button :: proc(ctx: ^src.Context, button: ^Button) {
+	fmt.printfln("delta: %v", ctx.dt)
+	roundness: f32 = 0.3
+	btn := (button^)
+	rl.GuiButton(btn.rect, "test")
+	// if btn.hovering {
+	// 	rl.DrawRectangleRounded(btn.rect, roundness, 0, rl.GREEN)
+	// } else {
+	// 	rl.DrawRectangleRounded(btn.rect, roundness, 0, rl.RED)
+	// }
 }
