@@ -70,7 +70,6 @@ start :: proc(ctx: ^src.Context, win: ^Window) {
 						break cell_iter
 					}
 				}
-				fmt.printfln("mouse_on_text: %v", mouse_on_text)
 				if mouse_on_text {
 					rl.SetMouseCursor(rl.MouseCursor.IBEAM)
 				} else {
